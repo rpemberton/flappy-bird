@@ -22,7 +22,7 @@ class App extends Component {
       wallH: 300,
       debouncerTimer: undefined,
       fallSpeed: 2,
-      elevateSpeed: 12,
+      elevateSpeed: 14,
     };
   };
   componentDidMount() {
@@ -34,7 +34,7 @@ class App extends Component {
     cancelAnimationFrame(gravityAnimation);
     this.setState({
       fallSpeed: 3,
-      elevateSpeed: 12,
+      elevateSpeed: 14,
     });
     moveUpAnimation = requestAnimationFrame(this.moveUp);
   };
@@ -52,10 +52,10 @@ class App extends Component {
     }
   };
   moveUpAfter = () => {
-    if (this.state.posY > 0 && this.state.elevateSpeed) {
+    if (this.state.posY > 0 && this.state.elevateSpeed > 0) {
       this.setState({
         posY: this.state.posY - this.state.elevateSpeed,
-        elevateSpeed: this.state.elevateSpeed - 1,
+        elevateSpeed: this.state.elevateSpeed - 0.7,
       });
       moveUpAnimationAfter = requestAnimationFrame(this.moveUpAfter);
     }
@@ -64,7 +64,7 @@ class App extends Component {
     if (this.state.posY < (settings.appHeight - settings.birdHeight)) {
       this.setState({
         posY: this.state.posY + this.state.fallSpeed,
-        fallSpeed: this.state.fallSpeed + 0.1,
+        fallSpeed: this.state.fallSpeed + 0.2,
       });
       gravityAnimation = requestAnimationFrame(this.gravity);
     }

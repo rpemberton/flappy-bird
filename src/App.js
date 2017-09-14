@@ -11,6 +11,8 @@ const settings = {
 let moveUpAnimation = undefined;
 let moveUpAnimationAfter = undefined;
 let gravityAnimation = undefined;
+// eslint-disable-next-line
+let wallAnimation = undefined;
 
 class App extends Component {
   constructor() {
@@ -18,7 +20,7 @@ class App extends Component {
     this.state = {
       gameActive: false,
       posX: settings.appWidth / 2 - settings.birdWidth / 4,
-      posY: 200,
+      posY: 150,
       wallX: 400,
       wallY: 300,
       fallSpeed: 2,
@@ -26,18 +28,15 @@ class App extends Component {
     };
   };
   componentDidMount() {
-    this.wallX();
+    wallAnimation = requestAnimationFrame(this.wallX);
   };
   componentDidUpdate() {
-    if (this.state.posY > (settings.appHeight - settings.birdHeight)) {
-      this.gameOver();
-    }
-
+    const fellToGround = this.state.posY > settings.appHeight - settings.birdHeight;
     const height = this.state.posY + settings.birdHeight >= this.state.wallY;
-    const width = this.state.posX + 50 > this.state.wallX && this.state.posX < this.state.wallX + 50;
+    const width = this.state.posX + settings.birdWidth > this.state.wallX && this.state.posX < this.state.wallX + 50;
 
-    if (width && height) {
-      console.log('hiiiiit');
+    if ((width && height) || fellToGround) {
+      this.gameOver();
     }
   }
   startGame = () => {
@@ -94,34 +93,31 @@ class App extends Component {
     gravityAnimation = requestAnimationFrame(this.gravity);
   };
   wallX = () => {
-    setInterval(() => {
-      if (this.state.wallX > -50) {
-        this.setState({
-           wallX: this.state.wallX - 1,
-        });
-      } else {
-        this.setState({
-          wallX: 400,
-          wallY: settings.appHeight - (Math.floor(Math.random() * (400 - 200)) + 200),
-        });
-        // console.log(Math.floor(Math.random() * (400 - 200)) + 200);
-      }
-    }, 10)
+    if (this.state.wallX > -50) {
+      this.setState({
+          wallX: this.state.wallX - 1.5,
+      });
+    } else {
+      this.setState({
+        wallX: 400,
+        wallY: settings.appHeight - (Math.floor(Math.random() * (400 - 200)) + 200),
+      });
+    }
+    wallAnimation = requestAnimationFrame(this.wallX);
   };
   gameOver = () => {
-    
+    cancelAnimationFrame(gravityAnimation);
     cancelAnimationFrame(moveUpAnimation);
     cancelAnimationFrame(moveUpAnimationAfter);
     this.setState({
       gameActive: false,
       posX: settings.appWidth / 2 - settings.birdWidth / 4,
-      posY: 200,
+      posY: 150,
       wallX: 400,
       wallY: 300,
       fallSpeed: 2,
       elevateSpeed: 14,
     });
-    cancelAnimationFrame(gravityAnimation);
   };
   render() {
     return (
@@ -157,15 +153,27 @@ class App extends Component {
             />
           }
 
+
+
+          
           { !this.state.gameActive &&
-            <circle
-              onClick={ this.startGame }
-              cx={ settings.appWidth / 2 }
-              cy={ settings.appHeight / 2 }
-              r="50"
-              fill="rgba(255,255,255,0.5)"
-            />
+            <g>
+              <circle
+                onClick={ this.startGame }
+                cx={ settings.appWidth / 2 }
+                cy={ settings.appHeight / 2 }
+                r="50"
+                fill="rgba(255,255,255,0.7)"
+              />
+              <polygon
+                transform="translate(177, 265)"
+                points="10,10, 10,60 50,35" 
+                fill="black" 
+              />
+            </g>
           }
+
+
           
         </svg>
       </div>

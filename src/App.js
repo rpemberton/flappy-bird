@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import Building from './components/Building.js';
+
 const settings = {
   appWidth: 400,
   appHeight: 600,
@@ -13,8 +15,6 @@ let animationMoveUpAfter = undefined;
 let animationGravity = undefined;
 // eslint-disable-next-line
 let animationWall = undefined;
-// eslint-disable-next-line
-let animationBuilding = undefined;
 
 class App extends Component {
   constructor() {
@@ -25,13 +25,9 @@ class App extends Component {
       posY: 150,
       wallLowX: 400,
       wallLowY: 300,
-      buildingX: 75,
       fallSpeed: 2,
       elevateSpeed: 10,
     };
-  };
-  componentDidMount() {
-    animationBuilding = requestAnimationFrame(this.buildingX);
   };
   componentDidUpdate() {
     const fellToGround = this.state.posY > settings.appHeight - settings.birdHeight;
@@ -126,18 +122,6 @@ class App extends Component {
     }
     animationWall = requestAnimationFrame(this.wallLowX);
   };
-  buildingX = () => {
-    if (this.state.buildingX > -80) {
-      this.setState({
-          buildingX: this.state.buildingX - 0.5,
-      });
-    } else {
-      this.setState({
-        buildingX: 400,
-      });
-    }
-    animationBuilding = requestAnimationFrame(this.buildingX);
-  };
   gameOver = () => {
     cancelAnimationFrame(animationMoveUp);
     cancelAnimationFrame(animationMoveUpAfter);
@@ -207,13 +191,7 @@ class App extends Component {
             fill="black"
           />
 
-          <rect
-            width="80"
-            height="200"
-            x={ this.state.buildingX }
-            y="400"
-            fill="#444"
-          />
+          <Building />
 
           <rect
             width="50"
@@ -246,12 +224,12 @@ class App extends Component {
               <circle
                 cx={ settings.appWidth / 2 }
                 cy={ settings.appHeight / 2 }
-                r="50"
+                r="40"
                 fill="white"
               />
               <polygon
-                transform="translate(177, 265)"
-                points="10,10, 10,60 50,35"
+                transform="translate(180, 270)"
+                points="10,10, 10,50 40,30"
                 fill="black"
               />
             </g>

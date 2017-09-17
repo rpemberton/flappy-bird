@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
+// eslint-disable-next-line
 let animate = undefined;
-let appWidth = 400;
 
 class Building extends Component {
   constructor() {
@@ -10,7 +10,6 @@ class Building extends Component {
       height: 200,
       width: 80,
       posX: 75,
-      appWidth: appWidth,
     };
   };
   componentDidMount() {
@@ -23,7 +22,7 @@ class Building extends Component {
       });
     } else {
       this.setState({
-        posX: appWidth,
+        posX: this.props.settings.appWidth,
       });
     }
     animate = requestAnimationFrame(this.moveX);
@@ -34,7 +33,7 @@ class Building extends Component {
         width={ this.state.width }
         height={ this.state.height }
         x={ this.state.posX }
-        y={ appWidth }
+        y={ this.props.settings.appWidth }
         fill="#444"
       />
     )

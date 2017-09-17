@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Building from './components/Building.js';
+import Wall from './components/Wall.js';
 
 const settings = {
   appWidth: 400,
@@ -13,49 +14,37 @@ const settings = {
 let animationMoveUp = undefined;
 let animationMoveUpAfter = undefined;
 let animationGravity = undefined;
-// eslint-disable-next-line
-let animationWall = undefined;
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       gameActive: false,
-      posX: settings.appWidth / 2 - settings.birdWidth / 4,
-      posY: 150,
-      wallLowX: 400,
-      wallLowY: 300,
+      bird: {
+        x: settings.appWidth / 2 - settings.birdWidth / 4,
+        y: 150,
+      },
       fallSpeed: 2,
       elevateSpeed: 10,
     };
   };
   componentDidUpdate() {
-    const fellToGround = this.state.posY > settings.appHeight - settings.birdHeight;
+    const fellToGround = this.state.bird.y > settings.appHeight - settings.birdHeight;
 
     if (fellToGround) {
-      this.gameOver();
-    }
-
-    const heightLowWall = this.state.posY + settings.birdHeight >= this.state.wallLowY;
-    const width = this.state.posX + settings.birdWidth > this.state.wallLowX && this.state.posX < this.state.wallLowX + 50;
-
-    if (width && heightLowWall) {
-      this.gameOver();
-    }
-
-    const heightHighWall = this.state.posY <= this.state.wallLowY - 200;
-
-    if (width && heightHighWall) {
       this.gameOver();
     }
   }
   startGame = () => {
     this.setState({
       gameActive: true,
-      posY: 150,
+      bird: {
+        x: settings.appWidth / 2 - settings.birdWidth / 4,
+        y: 150,
+      },
       elevateSpeed: 10,
     });
-    animationWall = requestAnimationFrame(this.wallLowX);
+    
     animationMoveUpAfter = requestAnimationFrame(this.moveUpAfter);
     animationGravity = requestAnimationFrame(this.gravity);
   };
@@ -78,17 +67,21 @@ class App extends Component {
     animationGravity = requestAnimationFrame(this.gravity);
   };
   moveUp = () => {
-    if (this.state.posY > 14) {
+    if (this.state.bird.y > 0) {
+      const bird = Object.assign(this.state.bird);
+      bird.y = this.state.bird.y - 10;
       this.setState({
-        posY: this.state.posY - 10,
+        bird,
       });
       animationMoveUp = requestAnimationFrame(this.moveUp);
     }
   };
   moveUpAfter = () => {
-    if (this.state.posY > 0 && this.state.elevateSpeed > 0) {
+    if (this.state.bird.y > 0 && this.state.elevateSpeed > 0) {
+      const bird = Object.assign(this.state.bird);
+      bird.y = this.state.bird.y - this.state.elevateSpeed;
       this.setState({
-        posY: this.state.posY - this.state.elevateSpeed,
+        bird,
         elevateSpeed: this.state.elevateSpeed - 0.5,
       });
       animationMoveUpAfter = requestAnimationFrame(this.moveUpAfter);
@@ -99,38 +92,23 @@ class App extends Component {
       cancelAnimationFrame(animationGravity);
       return;
     }
+    const bird = Object.assign(this.state.bird);
+    bird.y = this.state.bird.y + this.state.fallSpeed;
     this.setState({
-      posY: this.state.posY + this.state.fallSpeed,
+      bird,
       fallSpeed: this.state.fallSpeed + 0.3,
     });
     animationGravity = requestAnimationFrame(this.gravity);
-  };
-  wallLowX = () => {
-    if (!this.state.gameActive) {
-      cancelAnimationFrame(animationWall);
-      return;
-    }
-    if (this.state.wallLowX > -50) {
-      this.setState({
-          wallLowX: this.state.wallLowX - 2,
-      });
-    } else {
-      this.setState({
-        wallLowX: 400,
-        wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
-      });
-    }
-    animationWall = requestAnimationFrame(this.wallLowX);
   };
   gameOver = () => {
     cancelAnimationFrame(animationMoveUp);
     cancelAnimationFrame(animationMoveUpAfter);
     this.setState({
       gameActive: false,
-      posX: settings.appWidth / 2 - settings.birdWidth / 4,
-      posY: 150,
-      wallLowX: 400,
-      wallLowY: 300,
+      bird: {
+        x: settings.appWidth / 2 - settings.birdWidth / 4,
+        y: 150,
+      },
       fallSpeed: 2,
       elevateSpeed: 10,
     });
@@ -191,30 +169,23 @@ class App extends Component {
             fill="black"
           />
 
-          <Building />
-
-          <rect
-            width="50"
-            height={ settings.appHeight - this.state.wallLowY }
-            x={ this.state.wallLowX }
-            y={ this.state.wallLowY }
-            fill="red"
+          <Building 
+            settings={ settings }
           />
 
-          <rect
-            width="50"
-            height={ settings.appHeight - (settings.appHeight - this.state.wallLowY) - 200 }
-            x={ this.state.wallLowX }
-            y="0"
-            fill="red"
+          <Wall 
+            settings={ settings } 
+            bird={ this.state.bird }
+            gameOver={ this.gameOver }
+            gameActive={ this.state.gameActive }
           />
 
           { this.state.gameActive &&
             <rect
               width={ settings.birdWidth }
               height={ settings.birdHeight }
-              x={ this.state.posX }
-              y={ this.state.posY }
+              x={ this.state.bird.x }
+              y={ this.state.bird.y }
               fill="#008d46"
             />
           }

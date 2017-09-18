@@ -71,14 +71,12 @@ class App extends Component {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    if (this.state.bird.y > 0) {
-      const bird = Object.assign(this.state.bird);
-      bird.y = this.state.bird.y - 10;
-      this.setState({
-        bird,
-      });
-      animationMoveUp = requestAnimationFrame(this.moveUp);
-    }
+    const bird = Object.assign(this.state.bird);
+    bird.y = this.state.bird.y - 10 > 0 ? this.state.bird.y - 10 : 0;
+    this.setState({
+      bird,
+    });
+    animationMoveUp = requestAnimationFrame(this.moveUp);
   };
   moveUpAfter = () => {
     if (!this.state.gameActive) {

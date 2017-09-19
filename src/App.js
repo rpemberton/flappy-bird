@@ -4,6 +4,8 @@ import './App.css';
 import Building from './components/Building.js';
 import Wall from './components/Wall.js';
 
+import robot from './img/robot.png';
+
 const settings = {
   appWidth: 400,
   appHeight: 600,
@@ -14,6 +16,8 @@ const settings = {
 let animationMoveUp = undefined;
 let animationGravity = undefined;
 let animationWall = undefined;
+// eslint-disable-next-line
+let animationRotate = undefined;
 
 class App extends Component {
   constructor() {
@@ -26,6 +30,7 @@ class App extends Component {
       wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
       gravity: 0.4,
       velocity: -8,
+      birdRotation: 20,
     };
   };
 
@@ -50,11 +55,16 @@ class App extends Component {
   };
 
   handleMouseDown = () => {
+    cancelAnimationFrame(animationRotate);
+    this.setState({
+      birdRotation: 20,
+    });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
   handleMouseUp = () => {
     cancelAnimationFrame(animationMoveUp);
+    animationRotate = requestAnimationFrame(this.rotateBird);
   };
 
   moveUp = () => {
@@ -106,6 +116,13 @@ class App extends Component {
     }
     animationWall = requestAnimationFrame(this.moveWall);
   };
+
+  rotateBird = () => {
+    this.setState({
+      birdRotation: this.state.birdRotation + 2 < 180 ? this.state.birdRotation + 2 : 180,
+    });
+    animationRotate = requestAnimationFrame(this.rotateBird);
+  }
 
   render() {
     return (
@@ -177,13 +194,16 @@ class App extends Component {
           />
           
           { this.state.gameActive &&
-            <rect
-              width={ settings.birdWidth }
-              height={ settings.birdHeight }
+            <svg 
               x={ this.state.birdX }
-              y={ this.state.birdY }
-              fill="#008d46"
-            />
+              y={ this.state.birdY }>
+              <image 
+                width={ settings.birdWidth + 20 }
+                height={ settings.birdHeight + 20 }
+                xlinkHref={ robot }
+                transform={`rotate(${this.state.birdRotation}, 25, 25)`}
+              />
+            </svg>
           }
 
           { !this.state.gameActive &&
@@ -202,6 +222,8 @@ class App extends Component {
             </g>
           }
         </svg>
+
+        
       </div>
     );
   }

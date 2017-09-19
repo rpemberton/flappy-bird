@@ -5,7 +5,7 @@ const Wall = (props) => {
     <g>
       <rect
         width="50"
-        height={ props.settings.appHeight - (props.settings.appHeight - props.wallLowY) - 200 }
+        height={ props.wallTopHeight }
         x={ props.wallX }
         y="0"
         fill="red"
@@ -13,9 +13,9 @@ const Wall = (props) => {
 
       <rect
         width="50"
-        height={ props.settings.appHeight - props.wallLowY }
+        height={ props.settings.appHeight - props.wallTopHeight - 200  }
         x={ props.wallX }
-        y={ props.wallLowY }
+        y={ props.wallTopHeight + 200 }
         fill="red"
       />
     </g>

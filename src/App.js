@@ -23,15 +23,15 @@ class App extends Component {
       birdY: 150,
       birdX: settings.appWidth / 2 - settings.birdWidth / 4,
       wallX: settings.appWidth,
-      wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
+      wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
       gravity: 0.4,
       velocity: -8,
     };
   };
 
   componentDidUpdate() {
-    const heightLowWall = this.state.birdY + settings.birdHeight >= this.state.wallLowY;
-    const heightHighWall = this.state.birdY <= this.state.wallLowY - 200;
+    const heightHighWall = this.state.birdY <= this.state.wallTopHeight;
+    const heightLowWall = this.state.birdY + settings.birdHeight >= this.state.wallTopHeight + 200;
     const widthWall = this.state.birdX + settings.birdWidth > this.state.wallX && this.state.birdX < this.state.wallX + 50;
     if ((widthWall && heightLowWall) || (widthWall && heightHighWall)) {
       this.gameOver();
@@ -62,14 +62,7 @@ class App extends Component {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    if (this.state.birdY <= 0) {
-      this.setState({
-        birdY: 0,
-        velocity: 0,
-      });
-    } else {
-      this.setState({ velocity: -8 });
-    }
+    this.setState({ velocity: -8 });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
@@ -79,7 +72,7 @@ class App extends Component {
       return;
     }
     this.setState({
-      birdY: this.state.birdY + this.state.velocity,
+      birdY: this.state.birdY + this.state.velocity >= 0 ? this.state.birdY + this.state.velocity : 0,
       velocity: this.state.velocity + this.state.gravity,
     });
     animationGravity = requestAnimationFrame(this.gravity);
@@ -91,7 +84,7 @@ class App extends Component {
       birdY: 150,
       birdX: settings.appWidth / 2 - settings.birdWidth / 4,
       wallX: settings.appWidth,
-      wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
+      wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
       velocity: -8,
     });
   };
@@ -108,7 +101,7 @@ class App extends Component {
     } else {
       this.setState({
         wallX: settings.appWidth,
-        wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
+        wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
       });
     }
     animationWall = requestAnimationFrame(this.moveWall);
@@ -180,7 +173,7 @@ class App extends Component {
             gameOver={ this.gameOver }
             gameActive={ this.state.gameActive }
             wallX={ this.state.wallX }
-            wallLowY={ this.state.wallLowY }
+            wallTopHeight={ this.state.wallTopHeight }
           />
           
           { this.state.gameActive &&

@@ -8,7 +8,7 @@ const Wall = (props) => {
         height={ props.wallTopHeight }
         x={ props.wallX }
         y="0"
-        fill="red"
+        fill="#673AB7"
       />
 
       <rect
@@ -16,7 +16,7 @@ const Wall = (props) => {
         height={ props.settings.appHeight - props.wallTopHeight - 200  }
         x={ props.wallX }
         y={ props.wallTopHeight + 200 }
-        fill="red"
+        fill="#673AB7"
       />
     </g>
   )

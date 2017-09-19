@@ -7,10 +7,10 @@ import Wall from './components/Wall.js';
 import robot from './img/robot.png';
 
 const settings = {
-  appWidth: 400,
-  appHeight: 600,
-  birdWidth: 30,
-  birdHeight: 30,
+  appWidth: 450,
+  appHeight: 650,
+  birdWidth: 40,
+  birdHeight: 40,
 };
 
 let animationMoveUp = undefined;
@@ -198,8 +198,8 @@ class App extends Component {
               x={ this.state.birdX }
               y={ this.state.birdY }>
               <image 
-                width={ settings.birdWidth + 20 }
-                height={ settings.birdHeight + 20 }
+                width={ settings.birdWidth + 10 }
+                height={ settings.birdHeight + 10 }
                 xlinkHref={ robot }
                 transform={`rotate(${this.state.birdRotation}, 25, 25)`}
               />
@@ -215,7 +215,7 @@ class App extends Component {
                 fill="white"
               />
               <polygon
-                transform="translate(180, 270)"
+                transform="translate(204, 294)"
                 points="10,10, 10,50 40,30"
                 fill="black"
               />

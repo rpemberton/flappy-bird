@@ -12,7 +12,6 @@ const settings = {
 };
 
 let animationMoveUp = undefined;
-let animationMoveUpAfter = undefined;
 let animationGravity = undefined;
 let animationWall = undefined;
 
@@ -21,134 +20,104 @@ class App extends Component {
     super();
     this.state = {
       gameActive: false,
-      bird: {
-        x: settings.appWidth / 2 - settings.birdWidth / 4,
-        y: 150,
-      },
-      fallSpeed: 2,
-      elevateSpeed: 10,
-      wallX: 400,
-      wallLowY: 300,
+      birdY: 150,
+      birdX: settings.appWidth / 2 - settings.birdWidth / 4,
+      wallX: settings.appWidth,
+      wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
+      gravity: 0.4,
+      velocity: -8,
     };
   };
-  componentDidUpdate() {
-    this.testCollision();
-    const fellToGround = this.state.bird.y > settings.appHeight - settings.birdHeight;
 
+  componentDidUpdate() {
+    const heightLowWall = this.state.birdY + settings.birdHeight >= this.state.wallLowY;
+    const heightHighWall = this.state.birdY <= this.state.wallLowY - 200;
+    const widthWall = this.state.birdX + settings.birdWidth > this.state.wallX && this.state.birdX < this.state.wallX + 50;
+    if ((widthWall && heightLowWall) || (widthWall && heightHighWall)) {
+      this.gameOver();
+    }
+
+    const fellToGround = this.state.birdY > settings.appHeight - settings.birdHeight;
     if (fellToGround) {
       this.gameOver();
     }
   }
+
   startGame = () => {
-    this.setState({
-      gameActive: true,
-    });
-    
+    this.setState({ gameActive: true });
     animationWall = requestAnimationFrame(this.moveWall);
-    animationMoveUpAfter = requestAnimationFrame(this.moveUpAfter);
     animationGravity = requestAnimationFrame(this.gravity);
   };
+
   handleMouseDown = () => {
-    cancelAnimationFrame(animationMoveUpAfter);
-    cancelAnimationFrame(animationGravity);
-    if (!this.state.gameActive) { return; }
-    this.setState({
-      fallSpeed: 3,
-      elevateSpeed: 10,
-    });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
+
   handleMouseUp = () => {
-    if (!this.state.gameActive) { return; }
-
     cancelAnimationFrame(animationMoveUp);
-
-    animationMoveUpAfter = requestAnimationFrame(this.moveUpAfter);
-    animationGravity = requestAnimationFrame(this.gravity);
   };
+
   moveUp = () => {
     if (!this.state.gameActive) {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    const bird = Object.assign(this.state.bird);
-    bird.y = this.state.bird.y - 10 > 0 ? this.state.bird.y - 10 : 0;
-    this.setState({
-      bird,
-    });
+    if (this.state.birdY <= 0) {
+      this.setState({
+        birdY: 0,
+        velocity: 0,
+      });
+    } else {
+      this.setState({ velocity: -8 });
+    }
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
-  moveUpAfter = () => {
-    if (!this.state.gameActive) {
-      cancelAnimationFrame(animationMoveUpAfter);
-      return;
-    }
-    if (this.state.bird.y > 0 && this.state.elevateSpeed > 0) {
-      const bird = Object.assign(this.state.bird);
-      bird.y = this.state.bird.y - this.state.elevateSpeed;
-      this.setState({
-        bird,
-        elevateSpeed: this.state.elevateSpeed - 0.5,
-      });
-      animationMoveUpAfter = requestAnimationFrame(this.moveUpAfter);
-    }
-  };
+
   gravity = () => {
     if (!this.state.gameActive) {
       cancelAnimationFrame(animationGravity);
       return;
     }
-    const bird = Object.assign(this.state.bird);
-    bird.y = this.state.bird.y + this.state.fallSpeed;
     this.setState({
-      bird,
-      fallSpeed: this.state.fallSpeed + 0.3,
+      birdY: this.state.birdY + this.state.velocity,
+      velocity: this.state.velocity + this.state.gravity,
     });
     animationGravity = requestAnimationFrame(this.gravity);
   };
-  testCollision = () => {
-    const heightLowWall = this.state.bird.y + settings.birdHeight >= this.state.wallLowY;
-    const heightHighWall = this.state.bird.y <= this.state.wallLowY - 200;
-    const hitWidth = this.state.bird.x + settings.birdWidth > this.state.wallX && this.state.bird.x < this.state.wallX + 50;
 
-    if ((hitWidth && heightLowWall) || (hitWidth && heightHighWall)) {
-      this.gameOver();
-    }
-  }
   gameOver = () => {
     this.setState({
       gameActive: false,
-      bird: {
-        x: settings.appWidth / 2 - settings.birdWidth / 4,
-        y: 150,
-      },
-      fallSpeed: 2,
-      elevateSpeed: 10,
-      wallX: 400,
-      wallLowY: 300,
+      birdY: 150,
+      birdX: settings.appWidth / 2 - settings.birdWidth / 4,
+      wallX: settings.appWidth,
+      wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
+      velocity: -8,
     });
   };
+
   moveWall = () => {
     if (!this.state.gameActive) {
       cancelAnimationFrame(animationWall);
       return; 
-    }      
+    }
     if (this.state.wallX > -50) {
       this.setState({
         wallX: this.state.wallX - 2,
       });
     } else {
       this.setState({
-        wallX: 400,
+        wallX: settings.appWidth,
         wallLowY: settings.appHeight - (Math.floor(Math.random() * (300 - 100)) + 100),
       });
     }
     animationWall = requestAnimationFrame(this.moveWall);
   };
+
   render() {
     return (
       <div>
-        <svg xmlns="http://www.w3.org/2000/svg"
+        <svg
           onMouseDown={ this.handleMouseDown }
           onMouseUp={ this.handleMouseUp }
           width={ settings.appWidth }
@@ -218,8 +187,8 @@ class App extends Component {
             <rect
               width={ settings.birdWidth }
               height={ settings.birdHeight }
-              x={ this.state.bird.x }
-              y={ this.state.bird.y }
+              x={ this.state.birdX }
+              y={ this.state.birdY }
               fill="#008d46"
             />
           }

@@ -15,6 +15,9 @@ const settings = {
   wallWidth: 50,
 };
 
+let lastDownEvent = undefined;
+let lastUpEvent = undefined;
+
 let animationMoveUp = undefined;
 let animationGravity = undefined;
 let animationWall = undefined;
@@ -41,11 +44,6 @@ class App extends Component {
     };
   };
 
-  componentWillMount() {
-    window.addEventListener('keydown', this.handleMouseDown);
-    window.addEventListener('keyup', this.handleMouseUp);
-  }
-
   componentDidUpdate() {
     const fellToGround = this.state.birdY > settings.appHeight - settings.birdHeight;
 
@@ -55,12 +53,17 @@ class App extends Component {
   }
 
   startGame = () => {
-    this.setState({ gameActive: true });
+    this.setState({ gameActive: true, birdRotation: 20 });
     animationWall = requestAnimationFrame(this.moveWall);
     animationGravity = requestAnimationFrame(this.gravity);
   };
 
-  handleMouseDown = () => {
+  handleMouseDown = (e) => {
+    // prevent click event if touch is being used
+    if (e.type === 'mousedown' && lastDownEvent === 'touchstart') {
+      return;
+    }
+    lastDownEvent = e.type;
     cancelAnimationFrame(animationRotate);
     this.setState({
       birdRotation: 20,
@@ -68,7 +71,12 @@ class App extends Component {
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (e) => {
+    // prevent click event if touch is being used
+    if (e.type === 'mouseup' && lastUpEvent === 'touchend') {
+      return;
+    }
+    lastUpEvent = e.type;
     cancelAnimationFrame(animationMoveUp);
     animationRotate = requestAnimationFrame(this.rotateBird);
   };
@@ -104,6 +112,7 @@ class App extends Component {
       wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
       wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
       velocity: -8,
+      birdRotation: 20,
     });
   };
 
@@ -149,6 +158,9 @@ class App extends Component {
     return (
       <div id="gameApp">
         <svg
+          onMouseDown={ this.handleMouseDown }
+          onMouseUp={ this.handleMouseUp }
+
           onTouchStart={ this.handleMouseDown }
           onTouchEnd={ this.handleMouseUp }
 
@@ -248,14 +260,14 @@ class App extends Component {
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >
               <circle
-                r="40"
+                r="35"
                 fill="white"
               />
               <polygon
-                transform="translate(-20,-29)"
+                transform="translate(-18,-25)"
                 x="0"
                 y="0"
-                points="10,10, 10,50 40,30"
+                points="10,10, 10,40 33,25"
                 fill="black"
               />
             </g>

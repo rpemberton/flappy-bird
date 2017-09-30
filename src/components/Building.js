@@ -8,24 +8,25 @@ class Building extends Component {
     super();
     this.state = {
       height: undefined,
-      width: 80,
+      width: undefined,
       posX: undefined,
     };
   };
-  componentDidMount() {
-    this.randomHeight();
+  componentWillMount() {
+    this.newBuilding();
     this.setState({
       posX: this.props.posX,
     });
     animate = requestAnimationFrame(this.moveX);
   };
-  randomHeight() {
+  newBuilding() {
     this.setState({
       height: Math.floor(Math.random() * (300 - 50)) + 50,
+      width: Math.floor(Math.random() * (120 - 80)) + 80,
     })
   };
   moveX = () => {
-    if (this.state.posX > -80) {
+    if (this.state.posX > -this.state.width) {
       this.setState({
           posX: this.state.posX - 0.5,
       });
@@ -33,7 +34,7 @@ class Building extends Component {
       this.setState({
         posX: this.props.settings.appWidth,
       });
-      this.randomHeight();
+      this.newBuilding();
     }
     animate = requestAnimationFrame(this.moveX);
   };

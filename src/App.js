@@ -11,6 +11,8 @@ const settings = {
   appHeight: 650,
   birdWidth: 40,
   birdHeight: 40,
+  wallGap: 200,
+  wallWidth: 50,
 };
 
 let animationMoveUp = undefined;
@@ -26,8 +28,13 @@ class App extends Component {
       gameActive: false,
       birdY: 150,
       birdX: settings.appWidth / 2 - settings.birdWidth / 4,
-      wallX: settings.appWidth,
-      wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
+
+      wallX1: settings.appWidth,
+      wallX2: settings.appWidth * 1.5 + settings.wallWidth / 2,
+
+      wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
+      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
+
       gravity: 0.4,
       velocity: -8,
       birdRotation: 20,
@@ -35,14 +42,8 @@ class App extends Component {
   };
 
   componentDidUpdate() {
-    const heightHighWall = this.state.birdY <= this.state.wallTopHeight;
-    const heightLowWall = this.state.birdY + settings.birdHeight >= this.state.wallTopHeight + 200;
-    const widthWall = this.state.birdX + settings.birdWidth > this.state.wallX && this.state.birdX < this.state.wallX + 50;
-    if ((widthWall && heightLowWall) || (widthWall && heightHighWall)) {
-      this.gameOver();
-    }
-
     const fellToGround = this.state.birdY > settings.appHeight - settings.birdHeight;
+
     if (fellToGround) {
       this.gameOver();
     }
@@ -93,8 +94,10 @@ class App extends Component {
       gameActive: false,
       birdY: 150,
       birdX: settings.appWidth / 2 - settings.birdWidth / 4,
-      wallX: settings.appWidth,
-      wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
+      wallX1: settings.appWidth,
+      wallX2: settings.appWidth * 1.5 + settings.wallWidth / 2,
+      wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
+      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
       velocity: -8,
     });
   };
@@ -104,16 +107,29 @@ class App extends Component {
       cancelAnimationFrame(animationWall);
       return;
     }
-    if (this.state.wallX > -50) {
+
+    if (this.state.wallX1 > -50) {
       this.setState({
-        wallX: this.state.wallX - 2,
+        wallX1: this.state.wallX1 - 2,
       });
     } else {
       this.setState({
-        wallX: settings.appWidth,
-        wallTopHeight: Math.floor(Math.random() * (300 - 50)) + 50,
+        wallX1: settings.appWidth,
+        wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
       });
     }
+
+    if (this.state.wallX2 > -50) {
+      this.setState({
+        wallX2: this.state.wallX2 - 2,
+      });
+    } else {
+      this.setState({
+        wallX2: settings.appWidth,
+        wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
+      });
+    }
+
     animationWall = requestAnimationFrame(this.moveWall);
   };
 
@@ -126,7 +142,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div id="gameApp">
         <svg
           onMouseDown={ this.handleMouseDown }
           onMouseUp={ this.handleMouseUp }
@@ -192,11 +208,20 @@ class App extends Component {
 
           <Wall
             settings={ settings }
-            bird={ this.state.bird }
+            wallX={ this.state.wallX1 }
+            wallTopHeight={ this.state.wallTopHeight1 }
+            birdY={ this.state.birdY }
+            birdX={ this.state.birdX }
             gameOver={ this.gameOver }
-            gameActive={ this.state.gameActive }
-            wallX={ this.state.wallX }
-            wallTopHeight={ this.state.wallTopHeight }
+          />
+
+          <Wall
+            settings={ settings }
+            wallX={ this.state.wallX2 }
+            wallTopHeight={ this.state.wallTopHeight2 }
+            birdY={ this.state.birdY }
+            birdX={ this.state.birdX }
+            gameOver={ this.gameOver }
           />
 
           { this.state.gameActive &&
@@ -221,7 +246,7 @@ class App extends Component {
                 fill="white"
               />
               <polygon
-                transform="translate(204, 294)"
+                transform="translate(204, 295)"
                 points="10,10, 10,50 40,30"
                 fill="black"
               />

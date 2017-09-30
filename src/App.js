@@ -38,6 +38,11 @@ class App extends Component {
       wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
       wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
 
+      wallPoint1: false,
+      wallPoint2: false,
+
+      score: 0,
+
       gravity: 0.4,
       velocity: -8,
       birdRotation: 20,
@@ -50,10 +55,26 @@ class App extends Component {
     if (fellToGround) {
       this.gameOver();
     }
+
+    if (this.state.birdX > this.state.wallX1 && !this.state.wallPoint1) {
+      console.log(this.state.score);
+      this.setState({
+        wallPoint1: true,
+        score: this.state.score + 1,
+      });
+    }
+
+    if (this.state.birdX > this.state.wallX2 && !this.state.wallPoint2) {
+      console.log(this.state.score);
+      this.setState({
+        wallPoint2: true,
+        score: this.state.score + 1,
+      });
+    }
   }
 
   startGame = () => {
-    this.setState({ gameActive: true, birdRotation: 20 });
+    this.setState({ gameActive: true });
     animationWall = requestAnimationFrame(this.moveWall);
     animationGravity = requestAnimationFrame(this.gravity);
   };
@@ -130,6 +151,7 @@ class App extends Component {
       this.setState({
         wallX1: settings.appWidth,
         wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
+        wallPoint1: false,
       });
     }
 
@@ -141,6 +163,7 @@ class App extends Component {
       this.setState({
         wallX2: settings.appWidth,
         wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
+        wallPoint2: false,
       });
     }
 
@@ -265,8 +288,6 @@ class App extends Component {
               />
               <polygon
                 transform="translate(-18,-25)"
-                x="0"
-                y="0"
                 points="10,10, 10,40 33,25"
                 fill="black"
               />

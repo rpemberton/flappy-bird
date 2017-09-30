@@ -7,8 +7,8 @@ import Wall from './components/Wall.js';
 import robot from './img/robot.png';
 
 const settings = {
-  appWidth: 450,
-  appHeight: 650,
+  appWidth: window.innerWidth < 500 ? window.innerWidth : 500,
+  appHeight: window.innerHeight < 750 ? window.innerHeight : 750,
   birdWidth: 40,
   birdHeight: 40,
   wallGap: 200,
@@ -40,6 +40,11 @@ class App extends Component {
       birdRotation: 20,
     };
   };
+
+  componentWillMount() {
+    window.addEventListener('keydown', this.handleMouseDown);
+    window.addEventListener('keyup', this.handleMouseUp);
+  }
 
   componentDidUpdate() {
     const fellToGround = this.state.birdY > settings.appHeight - settings.birdHeight;
@@ -144,8 +149,9 @@ class App extends Component {
     return (
       <div id="gameApp">
         <svg
-          onMouseDown={ this.handleMouseDown }
-          onMouseUp={ this.handleMouseUp }
+          onTouchStart={ this.handleMouseDown }
+          onTouchEnd={ this.handleMouseUp }
+
           width={ settings.appWidth }
           height={ settings.appHeight }>
 
@@ -238,15 +244,17 @@ class App extends Component {
           }
 
           { !this.state.gameActive &&
-            <g onClick={ this.startGame }>
+            <g onClick={ this.startGame }
+              transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
+              >
               <circle
-                cx={ settings.appWidth / 2 }
-                cy={ settings.appHeight / 2 }
                 r="40"
                 fill="white"
               />
               <polygon
-                transform="translate(204, 295)"
+                transform="translate(-20,-29)"
+                x="0"
+                y="0"
                 points="10,10, 10,50 40,30"
                 fill="black"
               />

@@ -102,7 +102,7 @@ class App extends Component {
   moveWall = () => {
     if (!this.state.gameActive) {
       cancelAnimationFrame(animationWall);
-      return; 
+      return;
     }
     if (this.state.wallX > -50) {
       this.setState({
@@ -180,24 +180,30 @@ class App extends Component {
             fill="black"
           />
 
-          <Building 
+          <Building
             settings={ settings }
+            posX="75"
           />
 
-          <Wall 
-            settings={ settings } 
+          <Building
+            settings={ settings }
+            posX="300"
+          />
+
+          <Wall
+            settings={ settings }
             bird={ this.state.bird }
             gameOver={ this.gameOver }
             gameActive={ this.state.gameActive }
             wallX={ this.state.wallX }
             wallTopHeight={ this.state.wallTopHeight }
           />
-          
+
           { this.state.gameActive &&
-            <svg 
+            <svg
               x={ this.state.birdX }
               y={ this.state.birdY }>
-              <image 
+              <image
                 width={ settings.birdWidth + 10 }
                 height={ settings.birdHeight + 10 }
                 xlinkHref={ robot }
@@ -223,7 +229,7 @@ class App extends Component {
           }
         </svg>
 
-        
+
       </div>
     );
   }

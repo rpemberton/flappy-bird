@@ -57,7 +57,6 @@ class App extends Component {
     }
 
     if (this.state.birdX > this.state.wallX1 && !this.state.wallPoint1) {
-      console.log(this.state.score);
       this.setState({
         wallPoint1: true,
         score: this.state.score + 1,
@@ -65,7 +64,6 @@ class App extends Component {
     }
 
     if (this.state.birdX > this.state.wallX2 && !this.state.wallPoint2) {
-      console.log(this.state.score);
       this.setState({
         wallPoint2: true,
         score: this.state.score + 1,
@@ -134,6 +132,9 @@ class App extends Component {
       wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
       velocity: -8,
       birdRotation: 20,
+      wallPoint1: false,
+      wallPoint2: false,
+      score: 0,
     });
   };
 
@@ -276,6 +277,19 @@ class App extends Component {
                 transform={`rotate(${this.state.birdRotation}, 25, 25)`}
               />
             </svg>
+          }
+
+          { this.state.gameActive &&
+            <g transform={`translate(${settings.appWidth / 2 - 20},20)`}>
+              <rect width="40" height="40" rx="5" ry="5" fill="gray"/>
+
+              <text
+                textAnchor="middle"
+                transform="translate(20,31)"
+                style={{'font-size': '30px', fill: 'white'}}>
+                { this.state.score }
+              </text>
+            </g>
           }
 
           { !this.state.gameActive &&

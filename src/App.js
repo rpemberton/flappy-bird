@@ -22,8 +22,6 @@ let lastUpEvent = undefined;
 let animationMoveUp = undefined;
 let animationGravity = undefined;
 let animationWall = undefined;
-// eslint-disable-next-line
-let animationRotate = undefined;
 
 class App extends Component {
   constructor() {
@@ -32,38 +30,47 @@ class App extends Component {
       gameActive: false,
       birdY: settings.appHeight * 0.3,
       birdX: settings.appWidth / 2,
-      wallX1: settings.appWidth,
-      wallX2: settings.appWidth * 1.8,
-      wallTopHeight1: settings.appHeight * 0.2,
-      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
-      wallPoint1: false,
-      wallPoint2: false,
+
       score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
-      birdRotation: 32,
+      birdRotation: 28,
+
+      wall1: {
+        x: settings.appWidth,
+        height: settings.appHeight * 0.2,
+        point: false,
+      },
+
+      wall2: {
+        x: settings.appWidth * 1.8,
+        height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+        point: false,
+      }
     };
   };
 
   componentDidUpdate() {
-    const fellToGround = this.state.birdY > settings.appHeight - settings.birdHeight;
-
-    if (fellToGround) {
+    if (this.state.birdY > settings.appHeight - settings.birdHeight) {
       this.gameOver();
     }
 
-    if (this.state.birdX > this.state.wallX1 && !this.state.wallPoint1) {
+    if (this.state.birdX > this.state.wall1.x && !this.state.wall1.point) {
+      const wall1 = Object.assign({}, this.state.wall1);
+      wall1.point = true;
       this.setState({
-        wallPoint1: true,
+        wall1,
         score: this.state.score + 1,
-      });
+      })
     }
 
-    if (this.state.birdX > this.state.wallX2 && !this.state.wallPoint2) {
+    if (this.state.birdX > this.state.wall2.x && !this.state.wall2.point) {
+      const wall2 = Object.assign({}, this.state.wall2);
+      wall2.point = true;
       this.setState({
-        wallPoint2: true,
+        wall2,
         score: this.state.score + 1,
-      });
+      })
     }
   }
 
@@ -74,7 +81,6 @@ class App extends Component {
   };
 
   handleMouseDown = (e) => {
-    // prevent click event if touch is being used
     if (e.type === 'mousedown' && lastDownEvent === 'touchstart') {
       return;
     }
@@ -83,7 +89,6 @@ class App extends Component {
   };
 
   handleMouseUp = (e) => {
-    // prevent click event if touch is being used
     if (e.type === 'mouseup' && lastUpEvent === 'touchend') {
       return;
     }
@@ -96,7 +101,7 @@ class App extends Component {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    this.setState({ velocity: settings.velocity, birdRotation: 32 });
+    this.setState({ velocity: settings.velocity, birdRotation: 28 });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
@@ -105,16 +110,23 @@ class App extends Component {
       gameActive: false,
       birdY: settings.appHeight * 0.3,
       birdX: settings.appWidth / 2,
-      wallX1: settings.appWidth,
-      wallX2: settings.appWidth * 1.8,
-      wallTopHeight1: settings.appHeight * 0.2,
-      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
-      wallPoint1: false,
-      wallPoint2: false,
+
       score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
-      birdRotation: 32,
+      birdRotation: 28,
+
+      wall1: {
+        x: settings.appWidth,
+        height: settings.appHeight * 0.2,
+        point: false,
+      },
+
+      wall2: {
+        x: settings.appWidth * 1.8,
+        height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+        point: false,
+      }
     });
   };
 
@@ -124,45 +136,21 @@ class App extends Component {
       return;
     }
 
-    if (this.state.wallX1 >= settings.appWidth * -0.6) {
-      this.setState({
-        wallX1: this.state.wallX1 - 2,
-      });
-    } else {
-      this.setState({
-        wallX1: settings.appWidth,
-        wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 100,
-        wallPoint1: false,
-      });
-    }
+    const updatedState = Object.assign({}, this.state);
 
-    if (this.state.wallX2 >= settings.appWidth * -0.6) {
-      this.setState({
-        wallX2: this.state.wallX2 - 2,
-      });
-    } else {
-      this.setState({
-        wallX2: settings.appWidth,
-        wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 100,
-        wallPoint2: false,
-      });
-    }
-
-    // ['wallX1', 'wallX2'].forEach(wall => {
-    //   if (this.state[wall] >= settings.appWidth * -0.6) {
-    //     this.setState({
-    //       [wall]: this.state[wall] - 2,
-    //     });
-    //   } else {
-    //     this.setState({
-    //       [wall]: settings.appWidth,
-    //       wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 100,
-    //       wallPoint1: false,
-    //     });
-    //   }
-    // })
-
-
+    ['wall1', 'wall2'].forEach(wall => {
+      if (this.state[wall].x > settings.appWidth * -0.6) {
+        updatedState[wall].x -= 2;
+        this.setState(updatedState);
+      } else {
+        updatedState[wall] = {
+          x: settings.appWidth,
+          height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+          point: false,
+        }
+        this.setState(updatedState);
+      }
+    });
 
     animationWall = requestAnimationFrame(this.moveWall);
   };
@@ -175,7 +163,7 @@ class App extends Component {
     this.setState({
       birdY: this.state.birdY + this.state.velocity >= 0 ? this.state.birdY + this.state.velocity : 0,
       velocity: this.state.velocity + this.state.gravity,
-      birdRotation: this.state.birdRotation + 2 < 180 ? this.state.birdRotation + 2 : 180,
+      birdRotation: this.state.birdRotation + 2.5 < 180 ? this.state.birdRotation + 2.5 : 180,
     });
     animationGravity = requestAnimationFrame(this.gravity);
   };
@@ -252,20 +240,18 @@ class App extends Component {
 
           <Wall
             settings={ settings }
-            wallX={ this.state.wallX1 }
-            wallTopHeight={ this.state.wallTopHeight1 }
             birdY={ this.state.birdY }
             birdX={ this.state.birdX }
             gameOver={ this.gameOver }
+            wall={ this.state.wall1 }
           />
 
           <Wall
             settings={ settings }
-            wallX={ this.state.wallX2 }
-            wallTopHeight={ this.state.wallTopHeight2 }
             birdY={ this.state.birdY }
             birdX={ this.state.birdX }
             gameOver={ this.gameOver }
+            wall={ this.state.wall2 }
           />
 
           { this.state.gameActive &&
@@ -288,7 +274,7 @@ class App extends Component {
               <text
                 textAnchor="middle"
                 transform="translate(20,31)"
-                style={{'font-size': '30px', fill: 'white'}}>
+                style={{fontSize: '30px', fill: 'white'}}>
                 { this.state.score }
               </text>
             </g>

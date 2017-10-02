@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 
 class Wall extends Component {
   componentDidUpdate() {
-    const heightHighWall = this.props.birdY <= this.props.wallTopHeight;
-    const heightLowWall = this.props.birdY + this.props.settings.birdHeight >= this.props.wallTopHeight + this.props.settings.wallGap;
+    const heightHighWall = this.props.birdY <= this.props.wall.height;
+    const heightLowWall = this.props.birdY + this.props.settings.birdHeight >= this.props.wall.height + this.props.settings.wallGap;
     const widthWall =
-      this.props.birdX + this.props.settings.birdWidth > this.props.wallX &&
-      this.props.birdX < this.props.wallX + this.props.settings.wallWidth;
+      this.props.birdX + this.props.settings.birdWidth > this.props.wall.x &&
+      this.props.birdX < this.props.wall.x + this.props.settings.wallWidth;
 
     if ((widthWall && heightLowWall) || (widthWall && heightHighWall)) {
       this.props.gameOver();
@@ -17,17 +17,17 @@ class Wall extends Component {
       <g>
         <rect
           width={ this.props.settings.wallWidth }
-          height={ this.props.wallTopHeight }
-          x={ this.props.wallX }
+          height={ this.props.wall.height }
+          x={ this.props.wall.x }
           y="0"
           fill="#673AB7"
         />
 
         <rect
           width={ this.props.settings.wallWidth }
-          height={ this.props.settings.appHeight - this.props.wallTopHeight - this.props.settings.wallGap  }
-          x={ this.props.wallX }
-          y={ this.props.wallTopHeight + this.props.settings.wallGap }
+          height={ this.props.settings.appHeight - this.props.wall.height - this.props.settings.wallGap  }
+          x={ this.props.wall.x }
+          y={ this.props.wall.height + this.props.settings.wallGap }
           fill="#673AB7"
         />
       </g>

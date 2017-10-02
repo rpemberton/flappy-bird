@@ -7,12 +7,13 @@ import Wall from './components/Wall.js';
 import robot from './img/robot.png';
 
 const settings = {
-  appWidth: window.innerWidth < 500 ? window.innerWidth : 500,
+  appWidth: window.innerWidth < 450 ? window.innerWidth : 450,
   appHeight: window.innerHeight < 750 ? window.innerHeight : 750,
-  birdWidth: 40,
-  birdHeight: 40,
+  birdWidth: 30,
+  birdHeight: 30,
   wallGap: 200,
-  wallWidth: 50,
+  wallWidth: 70,
+  velocity: -9,
 };
 
 let lastDownEvent = undefined;
@@ -29,23 +30,18 @@ class App extends Component {
     super();
     this.state = {
       gameActive: false,
-      birdY: 150,
-      birdX: settings.appWidth / 2 - settings.birdWidth / 4,
-
+      birdY: settings.appHeight * 0.3,
+      birdX: settings.appWidth / 2,
       wallX1: settings.appWidth,
-      wallX2: settings.appWidth * 1.5 + settings.wallWidth / 2,
-
-      wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
+      wallX2: settings.appWidth * 1.8,
+      wallTopHeight1: settings.appHeight * 0.2,
       wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
-
       wallPoint1: false,
       wallPoint2: false,
-
       score: 0,
-
-      gravity: 0.4,
-      velocity: -8,
-      birdRotation: 20,
+      gravity: 0.5,
+      velocity: settings.velocity,
+      birdRotation: 32,
     };
   };
 
@@ -83,10 +79,6 @@ class App extends Component {
       return;
     }
     lastDownEvent = e.type;
-    cancelAnimationFrame(animationRotate);
-    this.setState({
-      birdRotation: 20,
-    });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
@@ -97,7 +89,6 @@ class App extends Component {
     }
     lastUpEvent = e.type;
     cancelAnimationFrame(animationMoveUp);
-    animationRotate = requestAnimationFrame(this.rotateBird);
   };
 
   moveUp = () => {
@@ -105,8 +96,75 @@ class App extends Component {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    this.setState({ velocity: -8 });
+    this.setState({ velocity: settings.velocity, birdRotation: 32 });
     animationMoveUp = requestAnimationFrame(this.moveUp);
+  };
+
+  gameOver = () => {
+    this.setState({
+      gameActive: false,
+      birdY: settings.appHeight * 0.3,
+      birdX: settings.appWidth / 2,
+      wallX1: settings.appWidth,
+      wallX2: settings.appWidth * 1.8,
+      wallTopHeight1: settings.appHeight * 0.2,
+      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
+      wallPoint1: false,
+      wallPoint2: false,
+      score: 0,
+      gravity: 0.5,
+      velocity: settings.velocity,
+      birdRotation: 32,
+    });
+  };
+
+  moveWall = () => {
+    if (!this.state.gameActive) {
+      cancelAnimationFrame(animationWall);
+      return;
+    }
+
+    if (this.state.wallX1 >= settings.appWidth * -0.6) {
+      this.setState({
+        wallX1: this.state.wallX1 - 2,
+      });
+    } else {
+      this.setState({
+        wallX1: settings.appWidth,
+        wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 100,
+        wallPoint1: false,
+      });
+    }
+
+    if (this.state.wallX2 >= settings.appWidth * -0.6) {
+      this.setState({
+        wallX2: this.state.wallX2 - 2,
+      });
+    } else {
+      this.setState({
+        wallX2: settings.appWidth,
+        wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 100,
+        wallPoint2: false,
+      });
+    }
+
+    // ['wallX1', 'wallX2'].forEach(wall => {
+    //   if (this.state[wall] >= settings.appWidth * -0.6) {
+    //     this.setState({
+    //       [wall]: this.state[wall] - 2,
+    //     });
+    //   } else {
+    //     this.setState({
+    //       [wall]: settings.appWidth,
+    //       wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 100,
+    //       wallPoint1: false,
+    //     });
+    //   }
+    // })
+
+
+
+    animationWall = requestAnimationFrame(this.moveWall);
   };
 
   gravity = () => {
@@ -117,66 +175,10 @@ class App extends Component {
     this.setState({
       birdY: this.state.birdY + this.state.velocity >= 0 ? this.state.birdY + this.state.velocity : 0,
       velocity: this.state.velocity + this.state.gravity,
+      birdRotation: this.state.birdRotation + 2 < 180 ? this.state.birdRotation + 2 : 180,
     });
     animationGravity = requestAnimationFrame(this.gravity);
   };
-
-  gameOver = () => {
-    this.setState({
-      gameActive: false,
-      birdY: 150,
-      birdX: settings.appWidth / 2 - settings.birdWidth / 4,
-      wallX1: settings.appWidth,
-      wallX2: settings.appWidth * 1.5 + settings.wallWidth / 2,
-      wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
-      wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
-      velocity: -8,
-      birdRotation: 20,
-      wallPoint1: false,
-      wallPoint2: false,
-      score: 0,
-    });
-  };
-
-  moveWall = () => {
-    if (!this.state.gameActive) {
-      cancelAnimationFrame(animationWall);
-      return;
-    }
-
-    if (this.state.wallX1 > -50) {
-      this.setState({
-        wallX1: this.state.wallX1 - 2,
-      });
-    } else {
-      this.setState({
-        wallX1: settings.appWidth,
-        wallTopHeight1: Math.floor(Math.random() * (300 - 50)) + 50,
-        wallPoint1: false,
-      });
-    }
-
-    if (this.state.wallX2 > -50) {
-      this.setState({
-        wallX2: this.state.wallX2 - 2,
-      });
-    } else {
-      this.setState({
-        wallX2: settings.appWidth,
-        wallTopHeight2: Math.floor(Math.random() * (300 - 50)) + 50,
-        wallPoint2: false,
-      });
-    }
-
-    animationWall = requestAnimationFrame(this.moveWall);
-  };
-
-  rotateBird = () => {
-    this.setState({
-      birdRotation: this.state.birdRotation + 2 < 180 ? this.state.birdRotation + 2 : 180,
-    });
-    animationRotate = requestAnimationFrame(this.rotateBird);
-  }
 
   render() {
     return (
@@ -240,12 +242,12 @@ class App extends Component {
 
           <Building
             settings={ settings }
-            posX="75"
+            posX={ settings.appWidth * 0.2 }
           />
 
           <Building
             settings={ settings }
-            posX="300"
+            posX={ settings.appWidth * 0.8 }
           />
 
           <Wall
@@ -271,10 +273,10 @@ class App extends Component {
               x={ this.state.birdX }
               y={ this.state.birdY }>
               <image
-                width={ settings.birdWidth + 10 }
-                height={ settings.birdHeight + 10 }
+                width={ settings.birdWidth + 10}
+                height={ settings.birdHeight + 10}
                 xlinkHref={ robot }
-                transform={`rotate(${this.state.birdRotation}, 25, 25)`}
+                transform={`rotate(${this.state.birdRotation}, 20, 20)`}
               />
             </svg>
           }

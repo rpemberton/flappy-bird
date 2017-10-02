@@ -181,12 +181,18 @@ class App extends Component {
           width={ settings.appWidth }
           height={ settings.appHeight }>
 
+          <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="black"/>
+            <stop offset="100%" stopColor="#303f9f"/>
+          </linearGradient>
+
           <rect
             width={ settings.appWidth }
             height={ settings.appHeight }
             x="0"
-            fill="black"
+            fill="url(#Gradient2)"
           />
+
 
           <circle
             className="star"
@@ -212,21 +218,9 @@ class App extends Component {
             fill="white"
           />
 
-          <circle
-            className="moon"
-            cx="150"
-            cy="150"
-            r="20"
-            fill="white"
-          />
-
-          <circle
-            className="eclipse"
-            cx="160"
-            cy="148"
-            r="20"
-            fill="black"
-          />
+          <g transform={`translate(${settings.appWidth * 0.7},${settings.appHeight * 0.6})`}>
+            <path d="M20 20A35 35 0 1 0 50 80 30 30 0 1 1 20 20z" fill="white"/>
+          </g>
 
           <Building
             settings={ settings }

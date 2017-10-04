@@ -19,6 +19,7 @@ const settings = {
 let lastDownEvent = undefined;
 let lastUpEvent = undefined;
 
+let countdown = undefined;
 let animationMoveUp = undefined;
 let animationGravity = undefined;
 let animationWall = undefined;
@@ -27,10 +28,12 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
+      gameStart: false,
       gameActive: false,
       birdY: settings.appHeight * 0.3,
       birdX: settings.appWidth / 2,
 
+      countdown: 3,
       score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
@@ -48,6 +51,25 @@ class App extends Component {
         point: false,
       }
     };
+  };
+
+  startGame = () => {
+    if (this.state.gameStart) {
+      return;
+    }
+    this.setState({ gameStart: true });
+
+    countdown = setInterval(() => {
+      this.setState({ countdown: this.state.countdown - 1});
+      if (this.state.countdown === 0) {
+        this.setState({ gameActive: true });
+        animationWall = requestAnimationFrame(this.moveWall);
+        animationGravity = requestAnimationFrame(this.gravity);
+      }
+      if (this.state.countdown === -1) {
+        clearInterval(countdown);
+      }
+    }, 400);
   };
 
   componentDidUpdate() {
@@ -73,12 +95,6 @@ class App extends Component {
       })
     }
   }
-
-  startGame = () => {
-    this.setState({ gameActive: true });
-    animationWall = requestAnimationFrame(this.moveWall);
-    animationGravity = requestAnimationFrame(this.gravity);
-  };
 
   handleMouseDown = (e) => {
     if (e.type === 'mousedown' && lastDownEvent === 'touchstart') {
@@ -107,10 +123,12 @@ class App extends Component {
 
   gameOver = () => {
     this.setState({
+      gameStart: false,
       gameActive: false,
       birdY: settings.appHeight * 0.3,
       birdX: settings.appWidth / 2,
 
+      countdown: 3,
       score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
@@ -274,19 +292,32 @@ class App extends Component {
             </g>
           }
 
-          { !this.state.gameActive &&
+          { this.state.countdown >= 0 &&
             <g onClick={ this.startGame }
+              className={ this.state.countdown === 0 ? 'fade-out' : '' }
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >
               <circle
                 r="35"
                 fill="white"
               />
-              <polygon
-                transform="translate(-18,-25)"
-                points="10,10, 10,40 33,25"
-                fill="black"
-              />
+
+              { !this.state.gameStart &&
+                <polygon
+                  transform="translate(-18,-25)"
+                  points="10,10, 10,40 33,25"
+                  fill="black"
+                />
+              }
+
+              { this.state.gameStart &&
+                <text
+                  textAnchor="middle"
+                  transform="translate(0, 17)"
+                  style={{fontSize: '52px'}}>
+                  { this.state.countdown }
+                </text>
+              }
             </g>
           }
         </svg>

@@ -21,7 +21,7 @@ class Building extends Component {
   };
   newBuilding() {
     this.setState({
-      height: Math.floor(Math.random() * (300 - 50)) + 50,
+      height: Math.floor(Math.random() * (this.props.settings.appHeight / 3 - 50)) + 50,
       width: Math.floor(Math.random() * (120 - 80)) + 80,
     })
   };

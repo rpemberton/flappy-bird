@@ -34,7 +34,7 @@ class App extends Component {
       birdX: settings.appWidth / 2,
 
       countdown: 3,
-      score: 0,
+      score: 33,
       gravity: 0.5,
       velocity: settings.velocity,
       birdRotation: 28,
@@ -97,6 +97,9 @@ class App extends Component {
   }
 
   handleMouseDown = (e) => {
+    if (!this.state.gameStart) {
+      this.startGame();
+    }
     if (e.type === 'mousedown' && lastDownEvent === 'touchstart') {
       return;
     }
@@ -163,7 +166,7 @@ class App extends Component {
       } else {
         updatedState[wall] = {
           x: settings.appWidth,
-          height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+          height: Math.random() * ((settings.appHeight - 300) - 70) + 70,
           point: false,
         }
         this.setState(updatedState);
@@ -279,21 +282,21 @@ class App extends Component {
             </svg>
           }
 
-          { this.state.gameActive &&
+          { !this.state.gameActive &&
             <g transform={`translate(${settings.appWidth / 2 - 20},20)`}>
-              <rect width="40" height="40" rx="5" ry="5" fill="gray"/>
+              <rect width="40" height="40" rx="5" ry="5" fill="#009688"/>
 
               <text
                 textAnchor="middle"
-                transform="translate(20,31)"
-                style={{fontSize: '30px', fill: 'white'}}>
+                transform="translate(20,30)"
+                style={{fontSize: '26px', fill: 'white'}}>
                 { this.state.score }
               </text>
             </g>
           }
 
           { this.state.countdown >= 0 &&
-            <g onClick={ this.startGame }
+            <g
               className={ 'fade-in ' + (this.state.countdown === 0 ? 'fade-out' : '') }
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >

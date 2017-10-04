@@ -305,13 +305,12 @@ class App extends Component {
                 fill="white"
               />
 
-              { !this.state.gameStart &&
-                <polygon
-                  transform="translate(-18,-25)"
-                  points="10,10, 10,40 33,25"
-                  fill="black"
-                />
-              }
+              <polygon
+                className={ this.state.gameStart ? 'fade-out' : '' }
+                transform="translate(-18,-25)"
+                points="10,10, 10,40 33,25"
+                fill="black"
+              />
 
               { this.state.gameStart &&
                 <text

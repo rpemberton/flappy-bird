@@ -294,7 +294,7 @@ class App extends Component {
 
           { this.state.countdown >= 0 &&
             <g onClick={ this.startGame }
-              className={ this.state.countdown === 0 ? 'fade-out' : '' }
+              className={ 'fade-in ' + (this.state.countdown === 0 ? 'fade-out' : '') }
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >
               <circle
@@ -313,8 +313,8 @@ class App extends Component {
               { this.state.gameStart &&
                 <text
                   textAnchor="middle"
-                  transform="translate(0, 17)"
-                  style={{fontSize: '52px'}}>
+                  transform="translate(0, 15)"
+                  style={{fontSize: '44px'}}>
                   { this.state.countdown }
                 </text>
               }

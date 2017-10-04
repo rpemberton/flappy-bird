@@ -4,7 +4,8 @@ import './App.css';
 import Building from './components/Building.js';
 import Wall from './components/Wall.js';
 
-import robot from './img/robot.png';
+// import robot from './img/robot.png';
+import robot from './img/android-logo.png';
 
 const settings = {
   appWidth: window.innerWidth < 450 ? window.innerWidth : 450,
@@ -34,7 +35,7 @@ class App extends Component {
       birdX: settings.appWidth / 2,
 
       countdown: 3,
-      score: 33,
+      score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
       birdRotation: 28,
@@ -282,7 +283,7 @@ class App extends Component {
             </svg>
           }
 
-          { !this.state.gameActive &&
+          { this.state.gameActive &&
             <g transform={`translate(${settings.appWidth / 2 - 20},20)`}>
               <rect width="40" height="40" rx="5" ry="5" fill="#009688"/>
 

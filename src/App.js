@@ -330,7 +330,7 @@ class App extends Component {
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >
               <circle
-                r="35"
+                r="32"
                 fill="white"
               />
 
@@ -345,8 +345,8 @@ class App extends Component {
               { this.state.gameStart &&
                 <text
                   textAnchor="middle"
-                  transform="translate(0, 15)"
-                  style={{fontSize: '44px'}}>
+                  transform="translate(0, 14)"
+                  style={{fontSize: '40px'}}>
                   { this.state.countdown }
                 </text>
               }

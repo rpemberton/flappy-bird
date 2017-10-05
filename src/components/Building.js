@@ -45,7 +45,7 @@ class Building extends Component {
         height={ this.state.height }
         x={ this.state.posX }
         y={ this.props.settings.appHeight - this.state.height }
-        fill="#212121"
+        fill="#1f2131"
       />
     )
   }

@@ -4,17 +4,14 @@ import './App.css';
 import Building from './components/Building.js';
 import Wall from './components/Wall.js';
 
-// import robot from './img/robot.png';
-import robot from './img/android-logo.png';
-
 const settings = {
   appWidth: window.innerWidth < 450 ? window.innerWidth : 450,
   appHeight: window.innerHeight < 750 ? window.innerHeight : 750,
-  birdWidth: 30,
-  birdHeight: 30,
-  wallGap: 200,
+  birdWidth: 32,
+  birdHeight: 32,
+  wallGap: 180,
   wallWidth: 70,
-  velocity: -9,
+  velocity: -8,
 };
 
 let lastDownEvent = undefined;
@@ -38,7 +35,7 @@ class App extends Component {
       score: 0,
       gravity: 0.5,
       velocity: settings.velocity,
-      birdRotation: 28,
+      birdRotation: 45,
 
       wall1: {
         x: settings.appWidth,
@@ -98,9 +95,6 @@ class App extends Component {
   }
 
   handleMouseDown = (e) => {
-    if (!this.state.gameStart) {
-      this.startGame();
-    }
     if (e.type === 'mousedown' && lastDownEvent === 'touchstart') {
       return;
     }
@@ -121,7 +115,7 @@ class App extends Component {
       cancelAnimationFrame(animationMoveUp);
       return;
     }
-    this.setState({ velocity: settings.velocity, birdRotation: 28 });
+    this.setState({ velocity: settings.velocity, birdRotation: 45 });
     animationMoveUp = requestAnimationFrame(this.moveUp);
   };
 
@@ -162,12 +156,12 @@ class App extends Component {
 
     ['wall1', 'wall2'].forEach(wall => {
       if (this.state[wall].x > settings.appWidth * -0.6) {
-        updatedState[wall].x -= 2;
+        updatedState[wall].x -= 2.2;
         this.setState(updatedState);
       } else {
         updatedState[wall] = {
           x: settings.appWidth,
-          height: Math.random() * ((settings.appHeight - 300) - 70) + 70,
+          height: Math.random() * ((settings.appHeight - 300) - 50) + 50,
           point: false,
         }
         this.setState(updatedState);
@@ -185,7 +179,7 @@ class App extends Component {
     this.setState({
       birdY: this.state.birdY + this.state.velocity >= 0 ? this.state.birdY + this.state.velocity : 0,
       velocity: this.state.velocity + this.state.gravity,
-      birdRotation: this.state.birdRotation + 2.5 < 180 ? this.state.birdRotation + 2.5 : 180,
+      birdRotation: this.state.birdRotation + 2.7 < 180 ? this.state.birdRotation + 2.7 : 180,
     });
     animationGravity = requestAnimationFrame(this.gravity);
   };
@@ -203,7 +197,7 @@ class App extends Component {
           width={ settings.appWidth }
           height={ settings.appHeight }>
 
-          <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+          <linearGradient id="background-gradient" x1="0" x2="0" y1="0" y2="1">
             <stop offset="0%" stopColor="black"/>
             <stop offset="100%" stopColor="#303f9f"/>
           </linearGradient>
@@ -212,15 +206,22 @@ class App extends Component {
             width={ settings.appWidth }
             height={ settings.appHeight }
             x="0"
-            fill="url(#Gradient2)"
+            fill="url(#background-gradient)"
           />
-
 
           <circle
             className="star"
             cx="100"
-            cy="250"
-            r="1.5"
+            cy="180"
+            r="1.2"
+            fill="white"
+          />
+
+          <circle
+            className="star"
+            cx={ settings.appWidth - 20 }
+            cy="160"
+            r="1.2"
             fill="white"
           />
 
@@ -236,6 +237,30 @@ class App extends Component {
             className="star"
             cx="50"
             cy="100"
+            r="1.4"
+            fill="white"
+          />
+
+          <circle
+            className="star"
+            cx="40"
+            cy="320"
+            r="1"
+            fill="white"
+          />
+
+          <circle
+            className="star"
+            cx="240"
+            cy="280"
+            r="1"
+            fill="white"
+          />
+
+          <circle
+            className="star"
+            cx="260"
+            cy="80"
             r="1.5"
             fill="white"
           />
@@ -273,23 +298,25 @@ class App extends Component {
           { this.state.gameActive &&
             <svg
               x={ this.state.birdX }
-              y={ this.state.birdY }>
-              <image
-                width={ settings.birdWidth + 10}
-                height={ settings.birdHeight + 10}
-                xlinkHref={ robot }
-                transform={`rotate(${this.state.birdRotation}, 20, 20)`}
+              y={ this.state.birdY }
+              width={ settings.birdWidth + 10}
+              height={ settings.birdHeight + 10}
+              fill="#009688"
+              viewBox="0 0 48 48">
+              <path
+                transform={`rotate(${this.state.birdRotation}, 24, 24)`}
+                d="M12 36c0 1.1.9 2 2 2h2v7c0 1.66 1.34 3 3 3s3-1.34 3-3v-7h4v7c0 1.66 1.34 3 3 3s3-1.34 3-3v-7h2c1.1 0 2-.9 2-2V16H12v20zM7 16c-1.66 0-3 1.34-3 3v14c0 1.66 1.34 3 3 3s3-1.34 3-3V19c0-1.66-1.34-3-3-3zm34 0c-1.66 0-3 1.34-3 3v14c0 1.66 1.34 3 3 3s3-1.34 3-3V19c0-1.66-1.34-3-3-3zM31.06 4.32l2.61-2.61c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L29.3 3.25C27.7 2.46 25.91 2 24 2c-1.92 0-3.72.46-5.33 1.26L15.7.29c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l2.62 2.62C13.94 6.51 12 10.03 12 14h24c0-3.98-1.95-7.5-4.94-9.68zM20 10h-2V8h2v2zm10 0h-2V8h2v2z"
               />
             </svg>
           }
 
           { this.state.gameActive &&
-            <g transform={`translate(${settings.appWidth / 2 - 20},20)`}>
-              <rect width="40" height="40" rx="5" ry="5" fill="#009688"/>
+            <g transform={`translate(${settings.appWidth / 2 - 22},20)`}>
+              <rect width="44" height="40" rx="5" ry="5" fill="#009688"/>
 
               <text
                 textAnchor="middle"
-                transform="translate(20,30)"
+                transform="translate(22,30)"
                 style={{fontSize: '26px', fill: 'white'}}>
                 { this.state.score }
               </text>
@@ -298,6 +325,7 @@ class App extends Component {
 
           { this.state.countdown >= 0 &&
             <g
+              onClick={ this.startGame }
               className={ 'fade-in ' + (this.state.countdown === 0 ? 'fade-out' : '') }
               transform={`translate(${settings.appWidth / 2},${settings.appHeight / 2})`}
               >
@@ -306,12 +334,13 @@ class App extends Component {
                 fill="white"
               />
 
-              <polygon
-                className={ this.state.gameStart ? 'fade-out' : '' }
-                transform="translate(-18,-25)"
-                points="10,10, 10,40 33,25"
-                fill="black"
-              />
+              { !this.state.gameStart &&
+                <polygon
+                  transform="translate(-18,-25)"
+                  points="10,10, 10,40 33,25"
+                  fill="black"
+                />
+              }
 
               { this.state.gameStart &&
                 <text

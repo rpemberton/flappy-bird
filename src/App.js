@@ -45,9 +45,8 @@ class App extends Component {
 
       wall2: {
         x: settings.appWidth * 1.8,
-        height: Math.random() * (
-          ((settings.appHeight / 2) - (settings.wallGap / 2) - 100) 
-        ) + 100,
+        height: Math.random() * 
+        ((settings.appHeight - (settings.wallGap + 50)) - 50) + 50,
         point: false,
       }
     };
@@ -142,9 +141,8 @@ class App extends Component {
 
       wall2: {
         x: settings.appWidth * 1.8,
-        height: Math.random() * (
-          ((settings.appHeight / 2) - (settings.wallGap / 2) - 100) 
-        ) + 100,
+        height: Math.random() * 
+        ((settings.appHeight - (settings.wallGap + 50)) - 50) + 50,
         point: false,
       }
     });

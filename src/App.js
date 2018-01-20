@@ -9,7 +9,7 @@ const settings = {
   appHeight: window.innerHeight < 750 ? window.innerHeight : 750,
   birdWidth: 32,
   birdHeight: 32,
-  wallGap: 180,
+  wallGap: 230,
   wallWidth: 70,
   velocity: -8,
 };
@@ -45,7 +45,9 @@ class App extends Component {
 
       wall2: {
         x: settings.appWidth * 1.8,
-        height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+        height: Math.random() * (
+          ((settings.appHeight / 2) - (settings.wallGap / 2) - 100) 
+        ) + 100,
         point: false,
       }
     };
@@ -140,7 +142,9 @@ class App extends Component {
 
       wall2: {
         x: settings.appWidth * 1.8,
-        height: Math.random() * ((settings.appHeight - 300) - 100) + 100,
+        height: Math.random() * (
+          ((settings.appHeight / 2) - (settings.wallGap / 2) - 100) 
+        ) + 100,
         point: false,
       }
     });
@@ -161,7 +165,8 @@ class App extends Component {
       } else {
         updatedState[wall] = {
           x: settings.appWidth,
-          height: Math.random() * ((settings.appHeight - 300) - 50) + 50,
+          height: Math.random() * 
+            ((settings.appHeight - (settings.wallGap + 50)) - 50) + 50,
           point: false,
         }
         this.setState(updatedState);

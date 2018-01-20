@@ -25,7 +25,7 @@ class Wall extends Component {
 
         <rect
           width={ this.props.settings.wallWidth }
-          height={ this.props.settings.appHeight - this.props.wall.height - this.props.settings.wallGap  }
+          height={ this.props.settings.appHeight - this.props.wall.height - this.props.settings.wallGap }
           x={ this.props.wall.x }
           y={ this.props.wall.height + this.props.settings.wallGap }
           fill="#c5cae9"

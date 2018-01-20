@@ -9,7 +9,7 @@ const settings = {
   appHeight: window.innerHeight < 750 ? window.innerHeight : 750,
   birdWidth: 32,
   birdHeight: 32,
-  wallGap: 230,
+  wallGap: 210,
   wallWidth: 70,
   velocity: -8,
 };
